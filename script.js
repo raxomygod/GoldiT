@@ -29,6 +29,7 @@ var signs = [
 var boardSigns = [];
 var foundSigns = [];
 var trySign = "";
+var gameIsRunning = true;
 
 var totalSigns = signs.length;
 const board = document.createElement("div");
@@ -53,13 +54,24 @@ for (var i = 0; i < totalSigns; i++){
 }
 
 document.body.appendChild(board);
-game();
 
+game();
+// setInterval(() => {
+//     if (!gameIsRunning){
+//         for (var i = 0; i < boardSigns.length; i++){
+//             const sign = boardSigns[i];
+//             const box = document.getElementById(sign);
+//             box.id = "";
+//             box.addEventListener("click", () => {
+//             })
+//         }
+//     }
+// }, 3000);
 
 /*
     FUNCTIONS
 */
-function game (){
+function game() {
     for (var i = 0; i < boardSigns.length; i++){
         const sign = boardSigns[i];
         console.log(i+1 + " : " + sign)
@@ -93,12 +105,11 @@ function game (){
                     trySign = sign;
                 }
             if (foundSigns.sort().toString() === boardSigns.sort().toString()){
-                setTimeout(() => {
-                    alert("VICTORY !");
-                }, 500);            
+                gameIsRunning = false;    
+                return;    
             }
                 
         }
         });
     }
-}
+};
