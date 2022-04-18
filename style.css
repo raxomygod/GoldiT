@@ -1,5 +1,6 @@
 *{
     box-sizing: border-box;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 body{
@@ -14,6 +15,36 @@ body{
     padding: 0;
     background-color: #000000;
     color: #FFFFFF;
+}
+
+#game-container{
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+
+}
+
+#start-button{
+    width: 150px;
+    height: 50px;
+    font-weight: bolder;
+    font-size: 1.8rem;
+    background-color: #FFD700;
+    text-shadow: 1px -2px 2px #FFFFFF;
+    border-radius: 5%;
+    letter-spacing: 2px;
+}
+#start-button:active{
+    transform: rotate(360);
+}
+#victory-div{
+    display: none;
+    font-size: 36px;
+    color: #FFD700;
+    text-shadow: 1px 1px 3px #FFFFFF;
+    margin-top: 20px;
 }
 
 #board{
