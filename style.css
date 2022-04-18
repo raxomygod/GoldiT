@@ -27,8 +27,8 @@ body{
     ;
     grid-template-rows: repeat(5, 1fr);
     grid-template-columns: repeat(4, 1fr);
-    width: 400px;
-    height: 400px;
+    width: 500px;
+    height: 500px;
 }
 .boxes{
     display: flex;
@@ -38,10 +38,12 @@ body{
     padding: 0;
     border: 1px solid #FFD700;
     color: #FFFFFF;
-    background-color: #000000;
-    text-shadow: 1px 2px 2px #FFFFFF;
+    text-shadow: 1px -1px 2px #FFD700;
+    font-weight: bolder;
+    font-size: 42px;
     cursor: pointer;
 }
 .boxes:active{
     transform: translateY(4px);
 }
+

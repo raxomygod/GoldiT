@@ -1,76 +1,61 @@
-// créer une grille (L x l)
-    // ajouter aléatoirement les signes dans les cases
-        // 2x le même signe max (paire)
-    // les signes seront cachés
-// le joueur clique sur une case
-    // le signe caché se dévoile
-// le joueur clique sur une seconde case
-    // si signe 1 = signe 2 
-        // les 2 cases restent retournées + validées
-    // sinon 
-        // les 2 cases sont de nouveaux cachées
-
-// var signs = [
-//     ["B", 1],
-//     ["D", 1],
-//     ["H", 1],
-//     ["M", 1],
-//     ["O", 1],
-//     ["S", 1],
-//     ["T", 1],
-//     ["W", 1],
-//     ["X", 1],
-//     ["0", 1],
-// ];
 var signs = [
     "B", "D", "H", "M", "O", "S", "T", "W", "X", "0",
     "B", "D", "H", "M", "O", "S", "T", "W", "X", "0"
 ];
 var boardSigns = [];
 var foundSigns = [];
-var trySign = "";
+var prevSign = "";
+var tries = 0;
 var gameIsRunning = true;
+
+const gameContainer = document.createElement("div");
+gameContainer.id = "game-container";
 
 var totalSigns = signs.length;
 const board = document.createElement("div");
 board.id = "board";
+board.className = "board";
+board.classList.toggle("checked");
 
-for (var i = 0; i < totalSigns; i++){
-    const box = document.createElement("div");
-    var randomSign = signs[Math.floor(Math.random() * signs.length)];
-    box.className = "boxes " + randomSign;
-    // define sign1 & sign2
-    if (boardSigns.includes(randomSign + "1")){
-        boardSigns.push(randomSign + "2");
-        box.id = randomSign + "2";
-    } else {
-        boardSigns.push(randomSign + "1");
-        box.id = randomSign + "1";
-    }
+const victoryDiv = document.createElement("div");
+victoryDiv.id = "victory-div";
+victoryDiv.innerText = "YOU GOLDED IT !";
 
-    box.innerText = "";
-    signs.splice(signs.indexOf(randomSign), 1);
-    board.appendChild(box);
-}
+gameContainer.appendChild(victoryDiv);
+document.body.appendChild(gameContainer);
 
-document.body.appendChild(board);
-
+setBoard();
 game();
-// setInterval(() => {
-//     if (!gameIsRunning){
-//         for (var i = 0; i < boardSigns.length; i++){
-//             const sign = boardSigns[i];
-//             const box = document.getElementById(sign);
-//             box.id = "";
-//             box.addEventListener("click", () => {
-//             })
-//         }
-//     }
-// }, 3000);
+
+// add score (tries made to paint board in gold)
+    // add local leaderboard
+// replay button after victory
+//
 
 /*
     FUNCTIONS
 */
+function setBoard(){
+    for (var i = 0; i < totalSigns; i++){
+        const box = document.createElement("div");
+        var randomSign = signs[Math.floor(Math.random() * signs.length)];
+        box.className = "boxes " + randomSign;
+        // define sign1 & sign2
+        if (boardSigns.includes(randomSign + "1")){
+            boardSigns.push(randomSign + "2");
+            box.id = randomSign + "2";
+        } else {
+            boardSigns.push(randomSign + "1");
+            box.id = randomSign + "1";
+        }
+    
+        box.innerText = "";
+        signs.splice(signs.indexOf(randomSign), 1);
+        board.appendChild(box);
+    }
+    gameContainer.appendChild(board);
+};
+
 function game() {
     for (var i = 0; i < boardSigns.length; i++){
         const sign = boardSigns[i];
@@ -79,17 +64,16 @@ function game() {
         
         box.addEventListener("click", () => {
             box.innerText = sign.slice(0,1);
-            if (sign === trySign){
-                // if player click the same box more than once
-                console.log("same box clicked!")
+            if (sign === prevSign || box.classList.contains("checked")){
+                console.log("same box or gold box clicked ! try again.");
             } else {             
-                if (trySign.length === 2){
+                if (prevSign.length === 2){
                     const sign1 = document.getElementById(sign);
-                    const sign2 = document.getElementById(trySign);
-                    if (sign !== trySign && sign.slice(0,1) === trySign.slice(0,1)){   
-                        [sign1, sign2].forEach(item => 
-                            item.style.backgroundColor = "#FFD700"); 
-                        foundSigns.push(sign, trySign);                      
+                    const sign2 = document.getElementById(prevSign);
+                    if (sign !== prevSign && sign.slice(0,1) === prevSign.slice(0,1)){   
+                        turnGold(sign1, true);
+                        turnGold(sign2, true);
+                        foundSigns.push(sign, prevSign);                      
                     } else {
                         [sign1, sign2].forEach(item => 
                             item.style.backgroundColor = "#FF1122"); 
@@ -100,12 +84,14 @@ function game() {
                             sign2.innerText = "";
                         }, 500);
                     }
-                    trySign = "";
+                    prevSign = "";
+                    tries++;
                 } else {
-                    trySign = sign;
+                    prevSign = sign;
                 }
             if (foundSigns.sort().toString() === boardSigns.sort().toString()){
-                gameIsRunning = false;    
+                gameIsRunning = false;   
+                //board.style.zoom = "50%";
                 return;    
             }
                 
@@ -113,3 +99,12 @@ function game() {
         });
     }
 };
+
+function turnGold(sign, statut) { 
+    if (statut){
+        sign.style.backgroundColor = "#FFD700";
+        sign.style.color = "#000000";
+        sign.style.textShadow = "1px 2px 2px #FFFFFF";
+        sign.classList.toggle("checked");
+    }
+}   
