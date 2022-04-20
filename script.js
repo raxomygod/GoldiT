@@ -2,11 +2,15 @@ var boardSigns = [];
 var foundSigns = [];
 var gameIsRunning = false;
 var leaderboard = [];
-var prevSign = "";
+// var signs = [
+//     "B", "D", "H", "M", "O", "S", "T", "W", "X", "0",
+//     "B", "D", "H", "M", "O", "S", "T", "W", "X", "0"
+// ];
 var signs = [
-    "B", "D", "H", "M", "O", "S", "T", "W", "X", "0",
-    "B", "D", "H", "M", "O", "S", "T", "W", "X", "0"
+    "B", "D", "H", "M", "O", "S", 
+    "B", "D", "H", "M", "O", "S"
 ];
+
 var totalSigns = signs.length;
 
 const gameContainer = document.createElement("div");
@@ -39,20 +43,13 @@ startBtn.addEventListener("click", () => {
 });
 
 replayBtn.addEventListener("click", () => {
-    boardSigns = [];
-    foundSigns = [];
-    prevSign = "";
+    document.querySelectorAll(".boxes").forEach(box => {
+        box.className = "boxes";
+    })
     board.style.zoom = "100%";
     replayBtn.style.display = "none";
     victoryDiv.style.display = "none";
-
-    document.querySelectorAll(".boxes").forEach(box => {
-        box.className = "boxes";
-        box.id = "";
-        box.style = "none";
-    })
     setBoard();
-    game();
 });
 
 // add local leaderboard
@@ -74,6 +71,10 @@ function createBoard(){
 function setBoard(){
     const boxes = document.querySelectorAll(".boxes");
     var usedSigns = [];
+    if (boardSigns.length > 0){
+        boardSigns = [];
+        foundSigns = [];
+    }
     boxes.forEach(box => {
         var randomSign = signs[Math.floor(Math.random() * signs.length)];
         box.classList.toggle(randomSign);
@@ -102,6 +103,10 @@ function setBoard(){
 
 function game() {
     var tries = 0;
+    var prevSign = "";
+    console.log("BOARDSIGNS:")
+    console.log(boardSigns)
+    console.log(foundSigns)
     for (var i = 0; i < boardSigns.length; i++){
         const sign = boardSigns[i];
         const box = document.getElementById(sign);
@@ -114,21 +119,15 @@ function game() {
                 else if (prevSign.length === 2){
                     const sign1 = document.getElementById(sign);
                     const sign2 = document.getElementById(prevSign);
-                    if (sign1.innerText === sign2.innerText){   
+                    if (sign1.innerText === sign2.innerText){  
                         turnGold(sign1);
                         turnGold(sign2);
                         foundSigns.push(sign, prevSign);                      
                     } 
                     else {
                         // if not matching
-                        sign1.style.backgroundColor = "#FF1122";
-                        sign2.style.backgroundColor = "#FF1122";
-                        setTimeout(() => {
-                            sign1.style.backgroundColor = "#000000";
-                            sign1.innerText = "";
-                            sign2.style.backgroundColor = "#000000";
-                            sign2.innerText = "";
-                        }, 500);
+                        turnRed(sign1);
+                        turnRed(sign2);
                     }
                     prevSign = "";
                     tries++;
@@ -146,21 +145,21 @@ function game() {
 };
 
 function turnGold(sign) { 
-    sign.style.cssText += `
-        background-color: #FFD700;
-        color: #000000;
-        text-shadow: 1px 2px 2px #FFFFFF;
-    `;
-    sign.className += " checked";
+    sign.classList.toggle("checked");
 }; 
+
+function turnRed(sign){
+    sign.style.backgroundColor = "#FF1122";
+    setTimeout(() => {
+        sign.style.backgroundColor = "";
+        sign.innerText = "";
+    }, 500);
+};
 
 function victory(tries) { 
     gameIsRunning = false;
     board.style.zoom = "50%";
     victoryDiv.innerText = `YOU GOLDED IT IN ${tries} TRIES!`;
     victoryDiv.style.display = "flex";
-    document.querySelectorAll(".boxes").forEach(box => {
-        box.style.border = "1px solid #000000";
-    });
     replayBtn.style.display = "flex";
 }
