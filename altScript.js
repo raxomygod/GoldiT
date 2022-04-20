@@ -1,5 +1,6 @@
 var boardSigns = [];
 var foundSigns = [];
+var leaderboard = [];
 var gameIsRunning = false;
 var tries = 0;
 // var signs = [
@@ -26,11 +27,14 @@ replayBtn.innerText = "GOLD MORE";
 const victoryDiv = document.createElement("div");
 victoryDiv.id = "victory-div";
 
+const leaderboardTable = document.createElement("table");
+leaderboardTable.id = "leaderboard";
+
 gameContainer.appendChild(victoryDiv);
 gameContainer.appendChild(replayBtn);
 document.body.appendChild(startBtn);
 document.body.appendChild(gameContainer);
-
+document.body.appendChild(leaderboardTable);
 
 startBtn.addEventListener("click", () => {
     startBtn.style.display = "none";
@@ -38,8 +42,18 @@ startBtn.addEventListener("click", () => {
     setBoard();
     gameContainer.style.display = "flex";
     game();
-
 });
+
+replayBtn.addEventListener("click", () => {
+    tries = 0;
+    replayBtn.style.display = "none";
+    victoryDiv.style.display = "none";
+    document.getElementById("board").style.zoom = "";
+    document.querySelectorAll(".boxes").forEach(box => {
+        box.classList.toggle("checked");
+    })
+    setBoard();
+})
 
 function createBoard(signsList){
     const board = document.createElement("div");
@@ -72,6 +86,7 @@ function setBoard() {
         document.querySelectorAll(".boxes").forEach(box => {box.innerText = ""});     
         gameIsRunning = true;  
     }, 2000);
+    console.log(boardSigns)
 };
 
 function game() {
@@ -83,18 +98,19 @@ function game() {
                 const sign = box.id;   
                 box.innerText = sign.slice(0,1);         
                 if (prevSign.length === 0){
-                    // if no previous sign
                     prevSign += sign;
-                } if (sign === prevSign){
-                    // if id of previous sign = id of clicked sign 
+                } 
+                if (sign === prevSign){
                     console.log("same box clicked !")
-                } else {
+                } 
+                else {
                     // if player try to find twins
                     if (sign.slice(0,1) === prevSign.slice(0,1)){
                         turnGold(document.getElementById(sign));
                         turnGold(document.getElementById(prevSign));
                         foundSigns.push(sign, prevSign);
-                    } else {
+                    } 
+                    else {
                         turnRed(document.getElementById(sign));
                         turnRed(document.getElementById(prevSign));
                     }
@@ -124,9 +140,32 @@ function turnRed(sign){
 };
 
 function victory(tries) { 
-    gameIsRunning = false;
     board.style.zoom = "50%";
     victoryDiv.innerText = `YOU GOLDED IT IN ${tries} TRIES!`;
     victoryDiv.style.display = "flex";
     replayBtn.style.display = "flex";
+    gameIsRunning = false;
+    boardSigns = [];
+    foundSigns = [];
+    leaderboard.push(tries);
 }
+
+leaderboard.push(7,6,9);
+
+function getLeaderboard(leaderboard){
+
+    leaderboardTable.innerHTML = `
+        <thead>
+            <tr>
+                <th>LEADERBOARD</th>
+            </tr>
+        </thead>
+        <tbody> 
+            <td>
+                ${scores}
+            </td> 
+        </tbody>  
+    `;
+
+}
+getLeaderboard(leaderboard)
